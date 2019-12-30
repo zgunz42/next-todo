@@ -1,12 +1,9 @@
 import React, {FC} from "react";
 import {Todo} from "todo";
-import {Formik, Form, Field, ErrorMessage, yupToFormErrors, useFormikContext} from "formik";
-import * as Yup from 'yup';
-import {uuidv4} from "../utils";
-import {experimentData} from 'next/dist/build/webpack/config/blocks/experiment-data';
-import DatePickerField from './DatePickerField';
+import {Formik, useFormikContext} from "formik";
+import {TodoSchema, uuidv4} from "../utils";
 import _ from "lodash";
-import { FormikProps } from "formik";
+import Moment from 'react-moment';
 
 export const AutoSave: FC<any> = ({ debounceMs }) => {
   const formik = useFormikContext();
@@ -25,13 +22,13 @@ export const AutoSave: FC<any> = ({ debounceMs }) => {
   }, [debouncedSubmit, formik.values]);
 
   return (
-    <>
+    <p style={{margin: 0, color: 'rgba(0,0,0,0.31)'}}>
       {!!formik.isSubmitting
         ? 'saving...'
         : lastSaved !== null
-          ? `Last Saved: ${lastSaved}`
+          ? <Moment date={lastSaved} fromNow ago />
           : null}
-    </>
+    </p>
   );
 };
 
@@ -39,17 +36,8 @@ interface Props {
   onSubmit: (todo: Todo) => Promise<any>
 }
 
-const TodoSchema = Yup.object().shape({
-  content: Yup.string()
-    .min(2, 'Too Short!')
-    .max(140, 'Too Long!')
-    .required('Required Field'),
-  expiredDate: Yup.date().min(new Date(), 'date cant be yesterday or less')
-});
-
-const TodoForm: FC<Props> = ({onSubmit}) => {
+const TodoForm: FC<Props> = ({onSubmit, children}) => {
   return (
-    <div>
       <Formik
         initialValues={{ content: '', expiredDate: new Date()}}
         validationSchema={TodoSchema}
@@ -66,19 +54,8 @@ const TodoForm: FC<Props> = ({onSubmit}) => {
           })
         }}
       >
-        {({values,setFieldValue, isSubmitting }) => (
-          <Form>
-            <Field name="content" />
-            <ErrorMessage name="content" component="div" />
-            <Field name="expiredDate">{DatePickerField}</Field>
-            <ErrorMessage name="expiredDate" component="div" />
-            <button type="submit" disabled={isSubmitting}>
-              Submit
-            </button>
-          </Form>
-        )}
+        {children}
       </Formik>
-    </div>
   )
 };
 

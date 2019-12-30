@@ -5,6 +5,7 @@ import {bindActionCreators} from "redux";
 import {TodoState, Todo} from "todo";
 import TodoList from "../components/TodoList";
 import Link from "next/link";
+import Head from "next/dist/next-server/lib/head";
 
 class Home extends Component<any, any> {
 
@@ -14,8 +15,6 @@ class Home extends Component<any, any> {
       todos: []
     }
   }
-
-
 
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
@@ -33,14 +32,39 @@ class Home extends Component<any, any> {
 
   render() {
     return (
-      <div>
-        <h1>TODO APP</h1>
-        <Link href="/create"><a>Create Todo</a></Link>
-        <TodoList todo={this.state.todos}
-                  onRemove={(todo) => this._removeTodo(todo.id)}
-                  onUpdate={(todo) => this._updateTodo(todo)}
-        />
-      </div>
+      <>
+        <Head>
+          <title>Todo App | Home</title>
+        </Head>
+        <div className="container">
+          <style jsx>{`
+          .placeholder {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        `}</style>
+          <div className="box">
+            <div className="box-header">
+              <h2>TODO APP</h2>
+            </div>
+            <div className="box-body">
+              {this.state.todos.length ? <TodoList todo={this.state.todos}
+                                                   onRemove={(todo) => this._removeTodo(todo.id)}
+                                                   onUpdate={(todo) => this._updateTodo(todo)}
+              /> : <div className="placeholder">No Content</div>}
+            </div>
+            <div className="box-footer">
+              <Link href="/create">
+                <a className="btn btn-primary">Create Todo</a>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </>
     )
   }
 }
