@@ -32,7 +32,7 @@
     "redux-thunk": "2.3.0",
     "styled-reset": "4.0.8",
     "typesafe-actions": "5.1.0",
-    "yup": "0.28.0"
+    "yup": "0.32.11"
   },
   "devDependencies": {
     "@types/bluebird": "3.5.29",
